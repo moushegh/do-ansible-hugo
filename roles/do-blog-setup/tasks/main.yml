@@ -1,0 +1,46 @@
+---
+- name: update system to latest versions
+  yum: name=* state=latest
+
+
+- name: installing packages
+  yum: name={{ item }} state=latest
+  with_items: "{{ do_packages }}"
+
+- name: start ntp service
+  service:
+    name: ntpd
+    state: running
+
+
+- name: download GO binary tar gz
+  get_url: 
+    url: https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz
+    dest: /tmp/go.tar.gz
+
+
+- name: unpack GOLang tar gz to /usr/local/go
+  unarchive: src=/tmp/go.tar.gz dest=/usr/local/ copy=no
+
+
+- name: add go to PATH 
+  lineinfile: dest=/root/.bash_profile line="export PATH=$PATH:/usr/local/go/bin"
+
+
+- name: Download Hugo Binary
+  get_url:
+    url: https://github.com/spf13/hugo/releases/download/v0.16/hugo_0.16_linux-64bit.tgz 
+    dest: /tmp/hugo.tar.gz
+
+
+- name: unpack HUGO
+  unarchive: src=/tmp/hugo.tar.gz dest=/usr/local/bin copy=no
+
+
+- name: installing pip
+  easy_install: name=pip state=latest
+
+- name: pip install Pygments
+  pip: name=Pygments
+
+

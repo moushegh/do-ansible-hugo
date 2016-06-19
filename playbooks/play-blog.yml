@@ -1,0 +1,48 @@
+- hosts: localhost
+  connection: local
+
+  vars:
+    state: present
+    env: "prod"
+    droplets:
+    - blog01
+    do_token:  "{{ lookup('env','DO_API_KEY') }}"
+    vm_image_id: 16040476
+    vm_image_size: 512mb
+
+  roles:
+    - role: do-ssh-key
+    - role: do-provision
+
+
+- hosts: all
+  sudo: true
+  gather_facts: True
+
+  roles:
+
+    - role: do-setup
+      do_packages:
+        - mc
+        - git
+        - openssl
+        - mlocate
+        - ntp
+        - strace
+        - epel-release
+        - deltarpm
+
+    - role: do-blog-setup
+      do_packages:
+        - fail2ban
+      do_go_verson: ""
+      do_hugo_version: ""
+
+    - role: do-nginx
+      do_packages:
+        - nginx
+      nginx_vhosts:
+        - hugo.nazaretyan.com
+
+
+

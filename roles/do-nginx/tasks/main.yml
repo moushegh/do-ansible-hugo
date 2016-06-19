@@ -1,0 +1,21 @@
+---
+- name: add nginx repo
+  yum_repository:
+    name: nginx
+    baseurl: http://nginx.org/packages/mainline/centos/7/$basearch/
+    gpgcheck: 0
+    enabled: true
+    description: nginx repo
+
+- name: installing packages
+  yum: name={{ item }} state=latest
+  with_items: "{{ do_packages }}"
+
+- name: adding vhosts
+  include: vhosts.yml
+
+- name: start nginx service
+  service:
+    name: nginx
+    state: running
+

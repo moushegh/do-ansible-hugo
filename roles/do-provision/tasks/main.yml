@@ -1,0 +1,16 @@
+---
+- name: ensure droplets exist
+  digital_ocean: >
+    state={{ state }}
+    command=droplet
+    api_token={{ do_token }}
+    name={{ item }}
+    private_networking=yes
+    unique_name=yes
+    size_id={{ vm_image_size }}
+    region_id=fra1
+    image_id={{ vm_image_id }}
+    ssh_key_ids={{ ssh_key.ssh_key.id }}
+  with_items: droplets
+  register: instances
+
